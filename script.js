@@ -1,44 +1,71 @@
-let
-    canv = document.getElementById('canvas'),
-    ctx = canv.getContext('2d'),
+let canv = document.getElementById("canvas"),
+    pgd = document.querySelector(".playground"),
+    ctx = canv.getContext("2d"),
     isMouseDown = false,
-    rad = 10,
-    coords = [];
+    rad = 1,
+    coords = [],
+    stat = [];
 
-canv.width = window.innerWidth;
-canv.height = window.innerHeight;
+canv.width = pgd.offsetWidth;
+console.log(pgd.offsetWidth);
+canv.height = pgd.offsetHeight;
 
 //code
 // проверка нажата ли кнопка мыши
-canv.addEventListener('mousedown', () => {
+canv.addEventListener("mousedown", () => {
     isMouseDown = true;
 });
 //проверка не нажата ли кнопка мыши
-canv.addEventListener('mouseup', () => {
+canv.addEventListener("mouseup", () => {
     isMouseDown = false;
     ctx.beginPath(); //разограничитель линии начнётся здесь
-    coords.push('mouseup'); //в координаты записывается когда делается разрыв
+    coords.push("mouseup"); //в координаты записывается когда делается разрыв
+    stat.push("mouseup");
 });
 
-ctx.lineWidth = rad * 2; //толщина линии
-canv.addEventListener('mousemove', (e) => {
-    if (isMouseDown) { //если зажата ЛКМ
-        coords.push([e.clientX, e.clientY]); //в координаты добавляются координаты по х и у в виде массива
-        ctx.lineTo(e.clientX, e.clientY); //прокладывается линиия к этим координатам
+function changeRad() {
+    let rds = document.querySelector("#line_width").value;
+    if (rds == "1") {
+        rad = 1;
+    } else if (rds == "2") {
+        rad = 2;
+    } else if (rds == "5") {
+        rad = 5;
+    } else if (rds == "10") {
+        rad = 10;
+    } else if (rds == "12") {
+        rad = 12;
+    } else if (rds == "15") {
+        rad = 15;
+    } else if (rds == "18") {
+        rad = 18;
+    } else if (rds == "20") {
+        rad = 20;
+    }
+    ctx.lineWidth = rad * 2;
+}
+
+//толщина линии
+canv.addEventListener("mousemove", (e) => {
+    if (isMouseDown) {
+        //если зажата ЛКМ
+        stat.push(rad);
+        coords.push([e.clientX, e.clientY - 100]); //в координаты добавляются координаты по х и у в виде массива
+        ctx.lineTo(e.clientX, e.clientY - 100); //прокладывается линиия к этим координатам
         ctx.stroke(); //непосредственно отрисовка линии
 
         ctx.beginPath(); //начало отрисовки
-        ctx.arc(e.clientX, e.clientY, rad, 0, Math.PI * 2); //чертится круг (координаты х, у, радиус, точка начала, окружность)
+        ctx.arc(e.clientX, e.clientY - 100, rad, 0, Math.PI * 2); //чертится круг (координаты х, у, радиус, точка начала, окружность)
         ctx.fill(); //команда отвечающая за заполнение цветом
 
         ctx.beginPath(); //начало отрисовки
-        ctx.moveTo(e.clientX, e.clientY); //передвижение к позиции на которой находится мышка 
+        ctx.moveTo(e.clientX, e.clientY - 100); //передвижение к позиции на которой находится мышка
     }
-
 });
 
 function save() {
-    localStorage.setItem('coords', JSON.stringify(coords)); //сохранение в локальныое зранилище(?) координат и js код преобразованый в json
+    localStorage.setItem("coords", JSON.stringify(coords)); //сохранение в локальныое зранилище(?) координат и js код преобразованый в json
+    localStorage.setItem("stat", JSON.stringify(stat));
 }
 
 function clear() {
@@ -48,54 +75,53 @@ function clear() {
 function replay() {
     let //объявляется таймер с интервалом 30 мс, каждые 30мс происходит:
         timer = setInterval(() => {
-            if (!coords.length) { //проверка на существование координат в массиве
-                clearInterval(timer); //очистка таймера
-                ctx.beginPath(); //начало новой линии
-                return;
-            }
-            let
-                crd = coords.shift(), //из координат "вырывается" первое значение и записывается в переменную
-                e = {
-                    clientX: crd["0"], //расстояние от левого края по х берется из массива нулевого
-                    clientY: crd["1"] //расстояние от верхнего края по у берется из массива первого
-                };
+        if (!coords.length) {
+            //проверка на существование координат в массиве
+            clearInterval(timer); //очистка таймера
+            ctx.beginPath(); //начало новой линии
+            return;
+        }
 
-            ctx.lineTo(e.clientX, e.clientY); //всё то же самое что и сверху
-            ctx.stroke();
+        let crd = coords.shift(), //из координат "вырывается" первое значение и записывается в переменную
+            e = {
+                clientX: crd["0"], //расстояние от левого края по х берется из массива нулевого
+                clientY: crd["1"], //расстояние от верхнего края по у берется из массива первого
+            };
+        let wgt = stat.shift();
+        ctx.lineWidth = wgt * 2;
+        console.log(ctx.lineWidth);
 
-            ctx.beginPath();
-            ctx.arc(e.clientX, e.clientY, rad, 0, Math.PI * 2);
-            ctx.fill();
+        ctx.lineTo(e.clientX, e.clientY); //всё то же самое что и сверху
+        ctx.stroke();
 
-            ctx.beginPath();
-            ctx.moveTo(e.clientX, e.clientY);
-        }, 30);
         ctx.beginPath();
+        ctx.arc(e.clientX, e.clientY, wgt, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(e.clientX, e.clientY);
+    }, 3);
 }
 
-
-document.addEventListener('keydown', (e) => {
-
+document.addEventListener("keydown", (e) => {
     if (e.keyCode == 83) {
         //save
         save();
-        console.log('Saved');
+        console.log("Saved");
     }
 
     if (e.keyCode == 82) {
         //replay
-        console.log('Replayin...');
-        coords = JSON.parse(localStorage.getItem('coords')); //координаты достаются из json документа и преобразуются в js код
+        console.log("Replayin...");
+        coords = JSON.parse(localStorage.getItem("coords")); //координаты достаются из json документа и преобразуются в js код
+        stat = JSON.parse(localStorage.getItem("stat"));
         clear();
         replay();
-        
     }
 
     if (e.keyCode == 67) {
         //clear
         clear();
-        console.log('Cleared');
-
+        console.log("Cleared");
     }
-
 });
