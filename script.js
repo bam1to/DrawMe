@@ -3,6 +3,7 @@ let canv = document.getElementById("canvas"),
     ctx = canv.getContext("2d"),
     isMouseDown = false,
     rad = 1,
+    color = "black",
     coords = [],
     stat = [];
 
@@ -45,11 +46,35 @@ function changeRad() {
     ctx.lineWidth = rad * 2;
 }
 
+function changeCol() {
+    let clr = document.querySelector("#line_color").value;
+    if (clr == "black") {
+        color = "black";
+    } else if (clr == "white") {
+        color = "white";
+    } else if (clr == "green") {
+        color = "green";
+    } else if (clr == "yellow") {
+        color = "yellow";
+    } else if (clr == "red") {
+        color = "red";
+    } else if (clr == "orange") {
+        color = "orange";
+    } else if (clr == "blue") {
+        color = "blue";
+    } else if (clr == "violet") {
+        color = "violet";
+    }
+}
+
 //толщина линии
 canv.addEventListener("mousemove", (e) => {
     if (isMouseDown) {
         //если зажата ЛКМ
-        stat.push(rad);
+
+        ctx.fillStyle = color;
+        ctx.strokeStyle = color;
+        stat.push([rad, color]);
         coords.push([e.clientX, e.clientY - 100]); //в координаты добавляются координаты по х и у в виде массива
         ctx.lineTo(e.clientX, e.clientY - 100); //прокладывается линиия к этим координатам
         ctx.stroke(); //непосредственно отрисовка линии
@@ -86,10 +111,18 @@ function replay() {
             e = {
                 clientX: crd["0"], //расстояние от левого края по х берется из массива нулевого
                 clientY: crd["1"], //расстояние от верхнего края по у берется из массива первого
-            };
-        let wgt = stat.shift();
+            },
+            stt = stat.shift(),
+            elem = {
+                wid: stt["0"],
+                color: stt["1"],
+            },
+            wgt = elem.wid,
+            col = elem.color;
         ctx.lineWidth = wgt * 2;
-        console.log(ctx.lineWidth);
+
+        ctx.fillStyle = col;
+        ctx.strokeStyle = col;
 
         ctx.lineTo(e.clientX, e.clientY); //всё то же самое что и сверху
         ctx.stroke();
