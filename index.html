@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 
-<body style="margin: 0">
+<body style="margin: 0; height: 100vh;">
     <nav>
         <ul>
             <li>
@@ -40,12 +40,12 @@
                 </select>
                 <button onclick="changeCol()">Apply</button>
             </li>
-            <li>Eraser</li>
+            <li><button value="eraser" onclick='eraser()'>Eraser</button></li>
             <li>Save cmp</li>
         </ul>
     </nav>
     <div class="playground">
-        <canvas id="canvas" style="display: block"> Sorry its not for u </canvas>
+        <canvas id="canvas" style="display: block; position: absolute; left: 0; bottom: 0;"> Sorry its not for u </canvas>
     </div>
 </body>
 

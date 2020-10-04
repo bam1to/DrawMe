@@ -8,8 +8,7 @@ let canv = document.getElementById("canvas"),
     stat = [];
 
 canv.width = pgd.offsetWidth;
-console.log(pgd.offsetWidth);
-canv.height = pgd.offsetHeight;
+canv.height = pgd.offsetHeight - 100;
 
 //code
 // проверка нажата ли кнопка мыши
@@ -67,6 +66,25 @@ function changeCol() {
     }
 }
 
+function eraser() {
+    let era = document.querySelector('.eraser');
+    canv.addEventListener("mousemove", (e) => {
+        if (isMouseDown) {
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'white';
+            ctx.lineTo(e.clientX, e.clientY - 100); //прокладывается линиия к этим координатам
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.rect(e.clientX, e.clientY, rad, rad);
+            ctx.fillRect();
+
+            ctx.beginPath(); //начало отрисовки
+            ctx.moveTo(e.clientX, e.clientY - 100);
+        }
+    })
+}
+
 //толщина линии
 canv.addEventListener("mousemove", (e) => {
     if (isMouseDown) {
@@ -100,40 +118,40 @@ function clear() {
 function replay() {
     let //объявляется таймер с интервалом 30 мс, каждые 30мс происходит:
         timer = setInterval(() => {
-        if (!coords.length) {
-            //проверка на существование координат в массиве
-            clearInterval(timer); //очистка таймера
-            ctx.beginPath(); //начало новой линии
-            return;
-        }
+            if (!coords.length) {
+                //проверка на существование координат в массиве
+                clearInterval(timer); //очистка таймера
+                ctx.beginPath(); //начало новой линии
+                return;
+            }
 
-        let crd = coords.shift(), //из координат "вырывается" первое значение и записывается в переменную
-            e = {
-                clientX: crd["0"], //расстояние от левого края по х берется из массива нулевого
-                clientY: crd["1"], //расстояние от верхнего края по у берется из массива первого
-            },
-            stt = stat.shift(),
-            elem = {
-                wid: stt["0"],
-                color: stt["1"],
-            },
-            wgt = elem.wid,
-            col = elem.color;
-        ctx.lineWidth = wgt * 2;
+            let crd = coords.shift(), //из координат "вырывается" первое значение и записывается в переменную
+                e = {
+                    clientX: crd["0"], //расстояние от левого края по х берется из массива нулевого
+                    clientY: crd["1"], //расстояние от верхнего края по у берется из массива первого
+                },
+                stt = stat.shift(),
+                elem = {
+                    wid: stt["0"],
+                    color: stt["1"],
+                },
+                wgt = elem.wid,
+                col = elem.color;
+            ctx.lineWidth = wgt * 2;
 
-        ctx.fillStyle = col;
-        ctx.strokeStyle = col;
+            ctx.fillStyle = col;
+            ctx.strokeStyle = col;
 
-        ctx.lineTo(e.clientX, e.clientY); //всё то же самое что и сверху
-        ctx.stroke();
+            ctx.lineTo(e.clientX, e.clientY); //всё то же самое что и сверху
+            ctx.stroke();
 
-        ctx.beginPath();
-        ctx.arc(e.clientX, e.clientY, wgt, 0, Math.PI * 2);
-        ctx.fill();
+            ctx.beginPath();
+            ctx.arc(e.clientX, e.clientY, wgt, 0, Math.PI * 2);
+            ctx.fill();
 
-        ctx.beginPath();
-        ctx.moveTo(e.clientX, e.clientY);
-    }, 3);
+            ctx.beginPath();
+            ctx.moveTo(e.clientX, e.clientY);
+        }, 3);
 }
 
 document.addEventListener("keydown", (e) => {
