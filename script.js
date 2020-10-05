@@ -5,10 +5,21 @@ let canv = document.getElementById("canvas"),
     rad = 1,
     color = "black",
     coords = [],
-    stat = [];
+    stat = [],
+    turn_off = false;
 
 canv.width = pgd.offsetWidth;
 canv.height = pgd.offsetHeight - 100;
+
+
+document.querySelector('#color').oninput = function() {
+    color = this.value;
+}
+
+document.querySelector('#width').oninput = function(){
+    rad = this.value;
+}
+
 
 //code
 // проверка нажата ли кнопка мыши
@@ -23,91 +34,74 @@ canv.addEventListener("mouseup", () => {
     stat.push("mouseup");
 });
 
-function changeRad() {
-    let rds = document.querySelector("#line_width").value;
-    if (rds == "1") {
-        rad = 1;
-    } else if (rds == "2") {
-        rad = 2;
-    } else if (rds == "5") {
-        rad = 5;
-    } else if (rds == "10") {
-        rad = 10;
-    } else if (rds == "12") {
-        rad = 12;
-    } else if (rds == "15") {
-        rad = 15;
-    } else if (rds == "18") {
-        rad = 18;
-    } else if (rds == "20") {
-        rad = 20;
-    }
-    ctx.lineWidth = rad * 2;
-}
-
-function changeCol() {
-    let clr = document.querySelector("#line_color").value;
-    if (clr == "black") {
-        color = "black";
-    } else if (clr == "white") {
-        color = "white";
-    } else if (clr == "green") {
-        color = "green";
-    } else if (clr == "yellow") {
-        color = "yellow";
-    } else if (clr == "red") {
-        color = "red";
-    } else if (clr == "orange") {
-        color = "orange";
-    } else if (clr == "blue") {
-        color = "blue";
-    } else if (clr == "violet") {
-        color = "violet";
-    }
-}
+// function changeRad() {
+//     let rds = document.querySelector("#line_width").value;
+//     if (rds == "1") {
+//         rad = 1;
+//     } else if (rds == "2") {
+//         rad = 2;
+//     } else if (rds == "5") {
+//         rad = 5;
+//     } else if (rds == "10") {
+//         rad = 10;
+//     } else if (rds == "12") {
+//         rad = 12;
+//     } else if (rds == "15") {
+//         rad = 15;
+//     } else if (rds == "18") {
+//         rad = 18;
+//     } else if (rds == "20") {
+//         rad = 20;
+//     }
+    
+// }
 
 function eraser() {
-    let era = document.querySelector('.eraser');
-    canv.addEventListener("mousemove", (e) => {
-        if (isMouseDown) {
-            ctx.fillStyle = 'white';
-            ctx.strokeStyle = 'white';
-            ctx.lineTo(e.clientX, e.clientY - 100); //прокладывается линиия к этим координатам
-            ctx.stroke();
+    if (turn_off == false) {
+        turn_off = true;
+        let era = document.querySelector('.eraser');
+        canv.addEventListener("mousemove", (e) => {
+            if (isMouseDown) {
 
-            ctx.beginPath();
-            ctx.rect(e.clientX, e.clientY, rad, rad);
-            ctx.fillRect();
-
-            ctx.beginPath(); //начало отрисовки
-            ctx.moveTo(e.clientX, e.clientY - 100);
-        }
-    })
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.fillRect(e.clientX - (rad / 2), e.clientY - (rad / 2) - 100, rad, rad);
+                //ctx.arc(e.clientX, e.clientY - 100, rad, 0, 0);
+            }
+        });
+    }
+    return;
 }
 
 //толщина линии
-canv.addEventListener("mousemove", (e) => {
-    if (isMouseDown) {
-        //если зажата ЛКМ
+function pencil() {
+    if (turn_off == false) {
+        turn_off = true;
+        canv.addEventListener("mousemove", (e) => {
+            if (isMouseDown) {
+                //если зажата ЛКМ
+                ctx.lineWidth = rad * 2;
+                ctx.fillStyle = color;
+                ctx.strokeStyle = color;
+                stat.push([rad, color]);
+                coords.push([e.clientX, e.clientY - 100]); //в координаты добавляются координаты по х и у в виде массива
+                ctx.lineTo(e.clientX, e.clientY - 100); //прокладывается линиия к этим координатам
+                ctx.stroke(); //непосредственно отрисовка линии
 
-        ctx.fillStyle = color;
-        ctx.strokeStyle = color;
-        stat.push([rad, color]);
-        coords.push([e.clientX, e.clientY - 100]); //в координаты добавляются координаты по х и у в виде массива
-        ctx.lineTo(e.clientX, e.clientY - 100); //прокладывается линиия к этим координатам
-        ctx.stroke(); //непосредственно отрисовка линии
+                ctx.beginPath(); //начало отрисовки
+                ctx.arc(e.clientX, e.clientY - 100, rad, 0, Math.PI * 2); //чертится круг (координаты х, у, радиус, точка начала, окружность)
+                ctx.fill(); //команда отвечающая за заполнение цветом
 
-        ctx.beginPath(); //начало отрисовки
-        ctx.arc(e.clientX, e.clientY - 100, rad, 0, Math.PI * 2); //чертится круг (координаты х, у, радиус, точка начала, окружность)
-        ctx.fill(); //команда отвечающая за заполнение цветом
-
-        ctx.beginPath(); //начало отрисовки
-        ctx.moveTo(e.clientX, e.clientY - 100); //передвижение к позиции на которой находится мышка
+                ctx.beginPath(); //начало отрисовки
+                ctx.moveTo(e.clientX, e.clientY - 100); //передвижение к позиции на которой находится мышка
+            }
+        });
     }
-});
+    turn_off = false;
+}
 
 function save() {
-    localStorage.setItem("coords", JSON.stringify(coords)); //сохранение в локальныое зранилище(?) координат и js код преобразованый в json
+    localStorage.setItem("coords", JSON.stringify(coords)); //сохранение в локальныое хранилище(?) координат и js код преобразованый в json
     localStorage.setItem("stat", JSON.stringify(stat));
 }
 

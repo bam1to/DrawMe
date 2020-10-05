@@ -116,8 +116,14 @@ ul {
 }
 
 li {
-    width: 260px;
+    width: 200px;
+    border-radius: 2px;
     text-align: center;
     padding: 14px 0;
     background-color: #c4c4c4;
+}
+
+.line_width {
+    width: 30%;
+    border: 0;
 }

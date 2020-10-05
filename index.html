@@ -5,40 +5,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="script.js" defer></script>
+    
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body style="margin: 0; height: 100vh;">
     <nav>
         <ul>
+            <li><button id="pencil" onclick="pencil()">Pencil</button></li>
             <li>
                 <label>Width: </label>
-                <select name="Width" id="line_width">
-                    <option value="1">1px</option>
-                    <option value="2">2px</option>
-                    <option value="5">5px</option>
-                    <option value="10">10px</option>
-                    <option value="12">12px</option>
-                    <option value="15">15px</option>
-                    <option value="18">18px</option>
-                    <option value="20">20px</option>
-                </select>
-                <button onclick="changeRad()">Apply</button>
+                <input type="text" id="width" class="line_width">
             </li>
             <li>
-                <label>Color</label>
-                <select name="Color" id="line_color">
-                    <option value="black">Black</option>
-                    <option value="white">White</option>
-                    <option value="green">Green</option>
-                    <option value="yellow">Yellow</option>
-                    <option value="red">Red</option>
-                    <option value="orange">Orange</option>
-                    <option value="blue">Blue</option>
-                    <option value="violet">Violet</option>
-                </select>
-                <button onclick="changeCol()">Apply</button>
+                <label>Color: </label>
+                <input type="color" id="color">
             </li>
             <li><button value="eraser" onclick='eraser()'>Eraser</button></li>
             <li>Save cmp</li>
@@ -47,6 +28,7 @@
     <div class="playground">
         <canvas id="canvas" style="display: block; position: absolute; left: 0; bottom: 0;"> Sorry its not for u </canvas>
     </div>
+    <script src="script.js" defer></script>
 </body>
 
 </html>
