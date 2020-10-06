@@ -34,28 +34,6 @@ canv.addEventListener("mouseup", () => {
     stat.push("mouseup");
 });
 
-// function changeRad() {
-//     let rds = document.querySelector("#line_width").value;
-//     if (rds == "1") {
-//         rad = 1;
-//     } else if (rds == "2") {
-//         rad = 2;
-//     } else if (rds == "5") {
-//         rad = 5;
-//     } else if (rds == "10") {
-//         rad = 10;
-//     } else if (rds == "12") {
-//         rad = 12;
-//     } else if (rds == "15") {
-//         rad = 15;
-//     } else if (rds == "18") {
-//         rad = 18;
-//     } else if (rds == "20") {
-//         rad = 20;
-//     }
-    
-// }
-
 function eraser() {
     if (turn_off == false) {
         turn_off = true;
